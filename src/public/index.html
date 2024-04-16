@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Avatar creation tool</title>
+</head>
+<body>
+<h1>Created tool</h1>
+<form action="/create-avatar" method="post">
+    <label for="avaname">Avatar name:</label><br>
+    <input type="text" id="avaname" name="avatarName"><br>
+
+    <label for="childage">Child age:</label><br>
+    <input type="number" id="childage" name="childAge" min="0" max="99"><br>
+
+    <label for="skincolor">Skin color:</label><br>
+    <input type="color" id="skincolor" name="skinColor" value="#000000"><br>
+
+    <label for="hairstyle">Hairstyle:</label><br>
+    <select id="hairstyle" name="hairstyle">
+        <option value="empty"></option>
+        <option value="curly">Curly</option>
+        <option value="long">Long hair</option>
+        <option value="bald">Bald</option>
+    </select><br>
+
+    <label for="headshape">Head shape:</label><br>
+    <select id="headshape" name="headshape">
+        <option value="empty"></option>
+        <option value="round">Round</option>
+        <option value="square">Square</option>
+        <option value="oval">Oval</option>
+    </select><br>
+
+    <label for="upperClothing">Upper part:</label><br>
+    <select id="upperClothing" name="upperClothing">
+        <option value="empty"></option>
+        <option value="tshirt">T-Shirt</option>
+        <option value="jacket">Jacket</option>
+        <option value="shirt">Shirt</option>
+    </select><br>
+
+    <label for="lowerClothing">Lower part:</label><br>
+    <select id="lowerClothing" name="lowerClothing">
+        <option value="empty"></option>
+        <option value="trousers">Trousers</option>
+        <option value="short">Short</option>
+        <option value="skirt">Skirt</option>
+    </select><br>
+    <button type="submit">Create</button>
+</form>
+
+</body>
+</html>
