@@ -1,19 +1,29 @@
 import express from 'express'
 import fs from 'fs'
+import Joi from 'joi'
+import avatarSchema from './avatar.schema.js'
+import {v4 as uuid} from 'uuid'
 const app = express()
 
 app.use(express.json())
 
-//const __dirname = "./src" //works for testing app.test.js
-const __dirname = "." //will work for postman
+const __dirname = "./src" //works for testing app.test.js
+//const __dirname = "." //will work for postman
 app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/public/index.html`)
 })
 
 app.post('/api/avatars', async (req, res) => {
     console.log(req.body)
+
+    const {error, value} = avatarSchema.validate(req.body)
+
+    if(error){
+        res.status(400).send(error)
+        return
+    }
     const avatar = {
-        id: Date.now(),
+        id: uuid(),
         createdAt: new Date().toISOString(),
         avatarName: req.body.avatarName,
         childAge: req.body.childAge,
@@ -59,7 +69,7 @@ app.get('/api/avatars/:id', (req, res) => {
         const data = fs.readFileSync(`${__dirname}/avatars.json`)
         const avatars = JSON.parse(data)
 
-        const avatar = avatars.find(a => a.id === parseInt(req.params.id))
+        const avatar = avatars.find(a => a.id === (req.params.id))
 
         if (!avatar) {
             return res.sendStatus(404)
@@ -74,7 +84,15 @@ app.get('/api/avatars/:id', (req, res) => {
 
 app.put('/api/avatars/:id', async (req, res) => {
     try {
-        const avatarId = parseInt(req.params.id)
+        const {error, value} = avatarSchema.validate(req.body, {abortEarly: false});
+
+        if(error){
+            res.status(400).send(error)
+            return
+        }
+
+
+        const avatarId = req.params.id
         const data = fs.readFileSync(`${__dirname}/avatars.json`)
         let avatars = JSON.parse(data)
 
@@ -96,7 +114,7 @@ app.put('/api/avatars/:id', async (req, res) => {
 
 app.delete('/api/avatars/:id', async (req, res) => {
     try {
-        const avatarId = parseInt(req.params.id)
+        const avatarId = (req.params.id)
         const data = fs.readFileSync(`${__dirname}/avatars.json`)
         let avatars = JSON.parse(data)
 

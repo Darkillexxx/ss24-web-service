@@ -8,8 +8,8 @@ describe('avatar api', () =>{
         "skinColor": "#ffff00",
         "hairstyle": "bald",
         "headShape": "round",
-        "upperClothing": "tshirt",
-        "lowerClothing": "short"
+        "upperClothing": "shirt",
+        "lowerClothing": "shorts"
     }
     test('create avatar', async () =>{
         const createResponse = await request(app)
@@ -18,7 +18,7 @@ describe('avatar api', () =>{
             .set('Accept', 'application/json')
             .expect(201);
         expect(createResponse.body).toMatchObject(TEST_DATA)
-        expect(createResponse.body.id).toBeGreaterThan(0)
+        //expect(createResponse.body.id).toBeGreaterThan(0)
         expect(createResponse.body.createdAt).toBeDefined()
 
         const newAvatarId = createResponse.body.id
@@ -97,9 +97,9 @@ describe('avatar api', () =>{
             "childAge": 10,
             "skinColor": "#f00f00",
             "hairstyle": "bald",
-            "headShape": "square",
-            "upperClothing": "jacket",
-            "lowerClothing": "trousers"
+            "headShape": "round",
+            "upperClothing": "hoodie",
+            "lowerClothing": "pants"
         }
         const updatedId = await request(app)
             .put(`/api/avatars/${createResponse.body.id}`)
@@ -109,4 +109,22 @@ describe('avatar api', () =>{
 
 
     })
+
+
+    test('create avatar requires at least avatar name and child\'s age', async () => {
+
+        const testData = {
+            "skinColor": "#0000ff",
+            "hairstyle": "short",
+            "headShape": "oval",
+            "upperClothing": "jacket",
+            "lowerClothing": "shorts"
+        }
+
+        const createResponse = await request(app)
+            .post('/api/avatars')
+            .send(testData)
+            .set('Accept', 'application/json')
+            .expect(400);
+    });
 })
