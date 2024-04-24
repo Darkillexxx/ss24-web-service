@@ -3,12 +3,41 @@ import fs from 'fs'
 import Joi from 'joi'
 import avatarSchema from './avatar.schema.js'
 import {v4 as uuid} from 'uuid'
+import passport from 'passport'
+import {Strategy} from 'passport-http-bearer'
 const app = express()
+
+
+//const __dirname = "./src" //works for testing app.test.js
+const __dirname = "." //will work for postman
+const user_file = fs.readFileSync(`${__dirname}/users.json`, 'utf-8')
+app.use(passport.authenticate('bearer', {session: false}))
+
+passport.use(new Strategy(
+    function(token, done) {
+        try{
+            const users = JSON.parse(user_file)
+            const user = users.find(user => user.token === token);
+            if(user){
+                done(null, user);
+            }else{
+                done(null, false)
+            }}
+        catch (err){
+            done(err);
+        }
+        // User.findOne({ token: token }, function (err, user) {
+        //     if (err) { return done(err); }
+        //     if (!user) { return done(null, false); }
+        //     return done(null, user, { scope: 'all' });
+        // });
+    }
+))
+
+
 
 app.use(express.json())
 
-const __dirname = "./src" //works for testing app.test.js
-//const __dirname = "." //will work for postman
 app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/public/index.html`)
 })
@@ -52,7 +81,9 @@ app.post('/api/avatars', async (req, res) => {
 
 })
 
-app.get('/api/avatars', async (req, res) => {
+app.get('/api/avatars',
+    passport.authenticate('bearer', { session: false }),
+    async (req, res) => {
     try {
         const data = fs.readFileSync(`${__dirname}/avatars.json`);
         const avatars = JSON.parse(data)
