@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="submit-form.js"></script>
     <title>Avatar creation tool</title>
 </head>
 <body>
 <h1>Created tool</h1>
-<form action="/create-avatar" method="post">
-    <label for="avaname">Avatar name:</label><br>
-    <input type="text" id="avaname" name="avatarName"><br>
+<form>
+    <label for="avatarname">Avatar name:</label><br>
+    <input type="text" id="avatarname" name="avatarName"><br>
 
     <label for="childage">Child age:</label><br>
     <input type="number" id="childage" name="childAge" min="0" max="99"><br>
@@ -19,35 +20,42 @@
     <label for="hairstyle">Hairstyle:</label><br>
     <select id="hairstyle" name="hairstyle">
         <option value="empty"></option>
-        <option value="curly">Curly</option>
-        <option value="long">Long hair</option>
+        <option value="short">Short</option>
         <option value="bald">Bald</option>
+        <option value="short-curly">Short-curly</option>
+        <option value="short-straight">Short-straight</option>
+        <option value="medium-curly">Medium curly</option>
+        <option value="medium-straight">Medium straight</option>
+        <option value="long-curly">Long curly</option>
+        <option value="long-straight">Long straight</option>
+        <option value="dread-locks">Dread locks</option>
     </select><br>
 
     <label for="headshape">Head shape:</label><br>
     <select id="headshape" name="headshape">
         <option value="empty"></option>
         <option value="round">Round</option>
-        <option value="square">Square</option>
-        <option value="oval">Oval</option>
+        <option value="heart">Heart</option>
+        <option value="rectangular">Rectangular</option>
     </select><br>
 
     <label for="upperClothing">Upper part:</label><br>
     <select id="upperClothing" name="upperClothing">
         <option value="empty"></option>
-        <option value="tshirt">T-Shirt</option>
         <option value="jacket">Jacket</option>
         <option value="shirt">Shirt</option>
+        <option value="hoodie">Hoodie</option>
+        <option value="dress">Dress</option>
     </select><br>
 
     <label for="lowerClothing">Lower part:</label><br>
     <select id="lowerClothing" name="lowerClothing">
         <option value="empty"></option>
-        <option value="trousers">Trousers</option>
-        <option value="short">Short</option>
+        <option value="shorts">Shorts</option>
+        <option value="pants">Pants</option>
         <option value="skirt">Skirt</option>
     </select><br>
-    <button type="submit">Create</button>
+    <button type="button" onclick="submitForm()">Create</button>
 </form>
 
 </body>

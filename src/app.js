@@ -10,11 +10,12 @@ import bcrypt from "bcrypt";
 
 import {isParent} from "./roles.js";
 import {isChild} from "./roles.js";
+import * as path from "path";
 
 const app = express()
 
-const __dirname = "./src" //works for testing app.test.js
-//const __dirname = "." //will work for postman
+//const __dirname = "./src" //works for testing app.test.js
+const __dirname = "." //will work for postman
 
 const user_file = fs.readFileSync(`${__dirname}/users.json`, 'utf-8')
 
@@ -40,9 +41,10 @@ passport.use(new BasicStrategy(
     }
 ))
 
-
-
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
+app.use(passport.authenticate('basic', {session: false}));
+
 
 app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/public/index.html`)
@@ -55,6 +57,7 @@ app.post('/api/avatars', passport.authenticate('basic', {session: false}), isPar
     const {error, value} = avatarSchema.validate(req.body)
 
     if(error){
+        console.warn(error)
         res.status(400).send(error)
         return
     }
@@ -179,16 +182,16 @@ app.post('/api/users', passport.authenticate('basic', {session: false}), isParen
     const user = {
         name: req.body.name,
         userName: req.body.userName,
-        password: req.body.password,
+        password: bcrypt.hash(req.body.password, 10),
         roles: req.body.roles
     }
     console.log(user)
     try {
-        const data = fs.readFileSync(`${__dirname}/avatars.json`)
+        const data = fs.readFileSync(`${__dirname}/users.json`)
         const currentAvatars = JSON.parse(data)
         currentAvatars.push(user)
 
-        await fs.writeFileSync(`${__dirname}/avatars.json`, JSON.stringify(currentAvatars))
+        await fs.writeFileSync(`${__dirname}/users.json`, JSON.stringify(currentAvatars))
         res.status(201).set("Location", `/api/avatars/${user.id}`).send(user)
     }
     catch (error) {
