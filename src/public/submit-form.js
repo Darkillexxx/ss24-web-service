@@ -1,6 +1,6 @@
 function submitForm(){
     const avatarName = document.getElementById('avatarname').value
-    const childAge = document.getElementById('childage').value
+    const childAge = parseInt(document.getElementById('childage').value)
     const skinColor = document.getElementById('skincolor').value
     const hairstyle = document.getElementById('hairstyle').value
     const headShape = document.getElementById('headshape').value
@@ -9,7 +9,7 @@ function submitForm(){
 
     const data = {
         avatarName,
-        childAge: parseInt(childAge),
+        childAge,
         skinColor,
         hairstyle,
         headShape,
