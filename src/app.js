@@ -13,8 +13,8 @@ import {isChild} from "./roles.js";
 
 const app = express()
 
-//const __dirname = "./src" //works for testing app.test.js
-const __dirname = "." //will work for postman
+const __dirname = "./src" //works for testing app.test.js
+//const __dirname = "." //will work for postman
 
 const user_file = fs.readFileSync(`${__dirname}/users.json`, 'utf-8')
 
