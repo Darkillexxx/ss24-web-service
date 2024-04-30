@@ -5,32 +5,38 @@ import avatarSchema from './avatar.schema.js'
 import {v4 as uuid} from 'uuid'
 import passport from 'passport'
 import {Strategy} from 'passport-http-bearer'
-const app = express()
+import {BasicStrategy} from 'passport-http'
+import bcrypt from "bcrypt";
 
+import {isParent} from "./roles.js";
+import {isChild} from "./roles.js";
+
+const app = express()
 
 //const __dirname = "./src" //works for testing app.test.js
 const __dirname = "." //will work for postman
-const user_file = fs.readFileSync(`${__dirname}/users.json`, 'utf-8')
-app.use(passport.authenticate('bearer', {session: false}))
 
-passport.use(new Strategy(
-    function(token, done) {
+const user_file = fs.readFileSync(`${__dirname}/users.json`, 'utf-8')
+
+
+passport.use(new BasicStrategy(
+    async function(userid, password, done) {
         try{
             const users = JSON.parse(user_file)
-            const user = users.find(user => user.token === token);
+            const user = users.find(user => user.userName === userid);
             if(user){
-                done(null, user);
+                const isCorrect = await bcrypt.compare(password, user.password)
+                if(isCorrect){
+                    done(null, user);
+                }else{
+                    done(null, false)
+                }
             }else{
                 done(null, false)
             }}
         catch (err){
             done(err);
         }
-        // User.findOne({ token: token }, function (err, user) {
-        //     if (err) { return done(err); }
-        //     if (!user) { return done(null, false); }
-        //     return done(null, user, { scope: 'all' });
-        // });
     }
 ))
 
@@ -42,7 +48,8 @@ app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/public/index.html`)
 })
 
-app.post('/api/avatars', async (req, res) => {
+app.post('/api/avatars', passport.authenticate('basic', {session: false}), isParent, async (req, res) => {
+
     console.log(req.body)
 
     const {error, value} = avatarSchema.validate(req.body)
@@ -81,9 +88,7 @@ app.post('/api/avatars', async (req, res) => {
 
 })
 
-app.get('/api/avatars',
-    passport.authenticate('bearer', { session: false }),
-    async (req, res) => {
+app.get('/api/avatars', passport.authenticate('basic', {session: false}), isChild, async (req, res) => {
     try {
         const data = fs.readFileSync(`${__dirname}/avatars.json`);
         const avatars = JSON.parse(data)
@@ -113,7 +118,7 @@ app.get('/api/avatars/:id', (req, res) => {
     }
 })
 
-app.put('/api/avatars/:id', async (req, res) => {
+app.put('/api/avatars/:id', passport.authenticate('basic', {session: false}), isParent, async (req, res) => {
     try {
         const {error, value} = avatarSchema.validate(req.body, {abortEarly: false});
 
@@ -143,7 +148,7 @@ app.put('/api/avatars/:id', async (req, res) => {
     }
 })
 
-app.delete('/api/avatars/:id', async (req, res) => {
+app.delete('/api/avatars/:id', passport.authenticate('basic', {session: false}), isParent, async (req, res) => {
     try {
         const avatarId = (req.params.id)
         const data = fs.readFileSync(`${__dirname}/avatars.json`)
@@ -162,5 +167,35 @@ app.delete('/api/avatars/:id', async (req, res) => {
         res.sendStatus(500)
     }
 });
+
+app.post('/api/users', passport.authenticate('basic', {session: false}), isParent, async (req, res) => {
+    console.log(req.body)
+    const {error, value} = avatarSchema.validate(req.body)
+
+    if(error){
+        res.status(400).send(error)
+        return
+    }
+    const user = {
+        name: req.body.name,
+        userName: req.body.userName,
+        password: req.body.password,
+        roles: req.body.roles
+    }
+    console.log(user)
+    try {
+        const data = fs.readFileSync(`${__dirname}/avatars.json`)
+        const currentAvatars = JSON.parse(data)
+        currentAvatars.push(user)
+
+        await fs.writeFileSync(`${__dirname}/avatars.json`, JSON.stringify(currentAvatars))
+        res.status(201).set("Location", `/api/avatars/${user.id}`).send(user)
+    }
+    catch (error) {
+        console.log(error)
+        res.sendStatus(500)
+    }
+})
+
 
 export default app;

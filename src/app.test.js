@@ -11,20 +11,26 @@ describe('avatar api', () =>{
         "upperClothing": "shirt",
         "lowerClothing": "shorts"
     }
+    const TEST_USER = {
+        "name": "alex",
+        "userName": "alex@home.edu",
+        "password": "1234"
+    }
     test('create avatar', async () =>{
         const createResponse = await request(app)
             .post('/api/avatars')
-            .send(TEST_DATA) // x-www-form-urlencoded upload
+            .auth('maria@home.edu', '123')
+            .send(TEST_DATA)
             .set('Accept', 'application/json')
             .expect(201);
         expect(createResponse.body).toMatchObject(TEST_DATA)
-        //expect(createResponse.body.id).toBeGreaterThan(0)
         expect(createResponse.body.createdAt).toBeDefined()
 
         const newAvatarId = createResponse.body.id
 
         const getOneResponse = await request(app)
             .get(`/api/avatars/${newAvatarId}`)
+            .auth('maria@home.edu', '123')
             .set('Accept', 'application/json')
             .expect(200);
         expect(getOneResponse.body).toMatchObject(TEST_DATA)
@@ -127,4 +133,14 @@ describe('avatar api', () =>{
             .set('Accept', 'application/json')
             .expect(400);
     });
+
+    test('create user', async () =>{
+
+        const createResponse = await request(app)
+            .post('/api/users')
+            .send(TEST_USER)
+            .set('Accept', 'application/json')
+            .expect(400);
+
+    })
 })

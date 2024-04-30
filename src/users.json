@@ -1,10 +1,16 @@
 [
   {
     "name": "Paul",
-    "token": "R4IQ8MJ92JZX4MQ7Z1T55ZHIJFHAYYIU"
+    "userName": "paul@home.edu",
+    "password": "$2b$10$rsYP40QX0gDWS158Ah7mLOuaNmVtmseOLNU9/FvBqBWM.gLbEICxy",
+    "token": "R4IQ8MJ92JZX4MQ7Z1T55ZHIJFHAYYIU",
+    "roles": ["child"]
   },
   {
     "name": "Marie",
-    "token": "FRMMAU2D29GISYCSFPA0RC4ZOAJP2QEG"
+    "userName": "maria@home.edu",
+    "password": "$2b$10$YEu15pdpG4dP1DOosppiouiKCutgDN4dnNkpgau9nKunlM0csC4ca",
+    "token": "FRMMAU2D29GISYCSFPA0RC4ZOAJP2QEG",
+    "roles": ["parent", "child"]
   }
 ]
